@@ -1,0 +1,52 @@
+* mailworm
+This is a utility to parse a bunch of e-mails in .msg/.eml-format, to extract the most relevant information (header fields, attachments and their  metadata), to enrich those information and store it in a .sqlite  file.
+
+Inspired by JAK's vision and his prototype!
+
+** Usage
+You can use the Dockerfile to satisfy all dependencies, by running the b/m commands, otherwise make sure, to install the neccessary apt-packages and install python's requirements by
+
+*** Manual install
+#+BEGIN_SRC sh
+sudo apt update
+sudo apt-get install -y  geoip-bin libemail-outlook-message-perl libemail-sender-perl
+pip3 install -r /src/requirements.txt
+#+END_SRC
+
+*** Docker install and usage
+#+BEGIN_SRC sh
+# Build container
+docker build -t mailworm
+
+# Run container
+docker run -it -v $(pwd):/data mailworm:latest
+
+# Then you get a shell in the container, which satisfies all dependencies
+# Run the script which is located under /src, to process mails inside bind mounted data directory
+python3 /src/mailworm.py -i /data/INPUT/ -o . -c 5678 -l
+# Press Ctrl-D to exit
+
+# Clean up; delete container
+docker ps -a | grep mailworm | while read line; do; docker rm $(echo $line | awk '{print $1}' ); done
+
+# Delete image
+docker rmi mailworm
+#+END_SRC
+
+*** CLI options
+
+#+BEGIN_SRC sh
+usage: mailworm.py [-h] -i INPUT_DIRECTORY [-o OUTPUT_DIRECTORY]
+		   [-c CASE_NUMBER] [-l]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -i INPUT_DIRECTORY, --input-directory INPUT_DIRECTORY
+			path to input directory
+  -o OUTPUT_DIRECTORY, --output-directory OUTPUT_DIRECTORY
+			path to output directory
+  -c CASE_NUMBER, --case-number CASE_NUMBER
+			case no. for directory naming
+  -l, --legacy-geoip    Specify '-l' to use legacy Geo IP DB (retrieve by
+			installing geoip-bin)
+#+END_SRC
