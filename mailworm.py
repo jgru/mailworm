@@ -21,7 +21,7 @@ class MailWorm:
         self.is_legacy_geoip = is_legacy_geoip
 
         if caseno is None:
-            self.caseno = self.query_caseno(self, caseno)
+            self.caseno = self.query_caseno()
         else:
             self.caseno = caseno
 
@@ -50,17 +50,15 @@ class MailWorm:
 
         return od, ed
 
-    @staticmethod
-    def query_caseno(caseno):
-        if caseno is None:
-            caseno = ""
-            while not caseno != "":
-                # Query file number for directory naming
-                print(NOTE_PFX + "Please enter case no. in format [number-year] - e.g. 123456-2020")
-                print_sep()
-                caseno = input("File no.: ")
-                caseno = caseno.replace("/", "_")
-                print(NOTE_PFX + f"Writing to case directory: {caseno}")
+    def query_caseno(self):
+        caseno = ""
+        while not caseno != "":
+            # Query file number for directory naming
+            print(NOTE_PFX + "Please enter case no. in format [number-year] - e.g. 123456-2020")
+            print_sep()
+            caseno = input("File no.: ")
+            caseno = caseno.replace("/", "_")
+            print(NOTE_PFX + f"Writing to case directory: {caseno}")
 
         return caseno
 

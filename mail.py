@@ -88,7 +88,9 @@ class Mail(Base):
 
         if self.recv_ip_first is not None and self.is_public_ip(self.recv_ip_first):
             self.recv_ip_whois_name, self.recv_ip_whois_desc = self.get_whois_ip(self.recv_ip_first)
-            self.recv_ip_geo = ", ".join(self.lookup_geoip(self.recv_ip_first))
+            city_country_tuple = self.lookup_geoip(self.recv_ip_first)
+            # Ignore None entries
+            self.recv_ip_geo = ", ".join(item if item else "" for item in city_country_tuple)
 
         self.date_raw, self.date_iso, self.timestamp = self.retrieve_ts(parsed_eml)
         self.from_field = self.retrieve_header_field(parsed_eml, "from")
@@ -151,7 +153,8 @@ class Mail(Base):
 
     @staticmethod
     def is_public_ip(ip):
-        if not IPAddress(ip).is_private():
+        ip_obj = IPAddress(ip)
+        if not ip_obj.is_private() and not ip_obj.is_reserved():
             return True
         return False
 
