@@ -147,7 +147,7 @@ class Mail(Base):
             return self.geoip_reader[0].country_code_by_addr(ip)
         elif IPAddress(ip).version == 6:
             # print(geoip_reader[0].country_code_by_addr(ip))
-            return self.geoip_reader[0].country_code_by_addr(ip)
+            return self.geoip_reader[1].country_code_by_addr(ip)
 
         return None
 
